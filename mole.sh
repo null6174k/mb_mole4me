@@ -50,6 +50,16 @@ case "$OSTYPE" in
         ;;
     darwin*)
         echo "OS detected: macOS"
+        VIDEOS_OUT_DIR="/Users/$(whoami)/Movies/MovieBox"
+        SUBS_OUT_DIR="/Users/$(whoami)/Movies/Subs"
+
+        if ! command -v adb &> /dev/null; then
+           echo "Error: 'adb' is not installed. Attempting macOS download..." >&2
+           mkdir -p "$HOME/platform-tools-local"
+           curl -sSL "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip" -o /tmp/tools.zip
+           unzip -q /tmp/tools.zip -d "$HOME/platform-tools-local"
+           export PATH="$PATH:$HOME/platform-tools-local/platform-tools"
+        fi
         ;;
     msys* | cygwin* | mingw*)
         echo "OS detected: Windows (Bash Environment)"
