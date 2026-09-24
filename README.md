@@ -31,10 +31,10 @@ This taught me a little about Bash scripting, the Android file system and permis
 
 ## Running the Script
 First, clone the repository and enter the directory:
-
+```bash
 git clone https://github.com/whotterre/mb_mole
 cd mb_mole
-
+```
 ## For PowerShell (Windows / Linux / macOS)
 
    1. Set your execution policy (Windows only, run once if scripts are blocked):
