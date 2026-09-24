@@ -43,7 +43,7 @@ cd mb_mole
    ```
    2. Run the script:
    ```powershell
-   .\mb_mole.ps1
+   .\mole.ps1
    ```
    
 ## For Bash (Linux / macOS / Git Bash)
@@ -54,7 +54,7 @@ cd mb_mole
    ```
    2. Run the script:
    ```bash
-   ./mb_mole.sh
+   ./mole.sh
    ```
    
 ## The Hidden App Paths Used
