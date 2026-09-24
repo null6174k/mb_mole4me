@@ -1,18 +1,18 @@
 #!/usr/bin/bash
 echo "Prepping to move MovieBox files..."
 
-set -euxo pipefail
+set -euo pipefail
 
-MOVIES_DIR=/storage/emulated/0/Android/data/com.community.oneroom/files/Download/d
-SUBS_DIR=/storage/emulated/0/Android/data/com.community.oneroom/files/Download/subtitle
+MOVIES_DIR="/storage/emulated/0/Android/data/com.community.oneroom/files/Download/d"
+SUBS_DIR="/storage/emulated/0/Android/data/com.community.oneroom/files/Download/subtitle"
 WANTS_SUBS=n # if you want the subs 
 TO_PHONE_DIR=n # if you want it saved on a visible folder on your phone.
 
 read -rp "Want subs? (y/n)" WANTS_SUBS
 read -rp "Do you want to make the videos visible on your File Manager (y/n)" TO_PHONE_DIR
 
-VIDEOS_OUT_DIR="/home/$(whoami)/Videos/MovieBox"
-SUBS_OUT_DIR="/home/$(whoami)/Videos/Subs"
+VIDEOS_OUT_DIR="$HOME/Videos/MovieBox"
+SUBS_OUT_DIR="$HOME/Videos/Subs"
 PHONE_DIR=/storage/emulated/0/Movies/MovieBox_Local
 
 case "$OSTYPE" in
@@ -45,6 +45,9 @@ case "$OSTYPE" in
         ;;
     msys* | cygwin* | mingw*)
         echo "OS detected: Windows (Bash Environment)"
+        VIDEOS_OUT_DIR=$(cygpath -m "$VIDEOS_OUT_DIR")
+        SUBS_OUT_DIR=$(cygpath -m "$SUBS_OUT_DIR")
+        export MSYS_NO_PATHCONV=1
         if ! command -v adb &> /dev/null; then
            echo "Error: 'adb' is not installed. Attempting Windows download..." >&2
            mkdir -p "$HOME/platform-tools-local"
