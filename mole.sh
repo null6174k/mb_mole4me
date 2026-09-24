@@ -11,6 +11,11 @@ TO_PHONE_DIR=n # if you want it saved on a visible folder on your phone.
 read -rp "Want subs? (y/n)" WANTS_SUBS
 read -rp "Do you want to make the videos visible on your File Manager (y/n)" TO_PHONE_DIR
 
+# Establish universal output path variables with safe Linux/Windows defaults
+VIDEOS_OUT_DIR="/home/$(whoami)/Videos/MovieBox"
+SUBS_OUT_DIR="/home/$(whoami)/Videos/Subs"
+PHONE_DIR=/storage/emulated/0/Movies/MovieBox_Local
+
 # Check OS and install platform specific version of adb for OS platform.
 case "$OSTYPE" in
     linux-gnu*)
@@ -26,27 +31,6 @@ case "$OSTYPE" in
            # Add to PATH
            export PATH="$PATH:$HOME/platform-tools-local/platform-tools"
         fi
-          # Alternate case: adb does exist (yay!)
-          # Check adb server status 
-          # If server isn't up, start server
-          adb start-server 
-
-          LINUX_VIDEOS_OUT_DIR="/home/$(whoami)/Videos/MovieBox"
-          LINUX_SUBS_OUT_DIR="/home/$(whoami)/Videos/Subs"
-          PHONE_DIR=/storage/emulated/0/Movies/
-          if [[ "$TO_PHONE_DIR" == "y" || "$TO_PHONE_DIR" == "Y" ]] ; then 
-             adb shell mkdir -p "$PHONE_DIR"
-             adb shell cp -r "$MOVIES_DIR" "$PHONE_DIR"
-          fi
-          # Take files from the directory and move them to the MovieBox directory
-          # Make LINUX_OUT_DIR and SUBS_DIR iff not exists (idempotent)
-          mkdir -p "$LINUX_VIDEOS_OUT_DIR"
-          mkdir -p "$LINUX_SUBS_OUT_DIR"
-
-          adb pull "$MOVIES_DIR" "$LINUX_VIDEOS_OUT_DIR"
-           if [[ "$WANTS_SUBS" == "y" || "$WANTS_SUBS" == "Y" ]] ; then
-           adb pull "$SUBS_DIR" "$LINUX_SUBS_OUT_DIR"
-          fi
         ;;
     darwin*)
         echo "OS detected: macOS"
@@ -77,6 +61,27 @@ case "$OSTYPE" in
         ;;
 esac 
 
+# Start server safely across all OS modes
+adb start-server 
+
+# Handle internal phone duplication structure if chosen
+if [[ "$TO_PHONE_DIR" == "y" || "$TO_PHONE_DIR" == "Y" ]] ; then 
+   adb shell mkdir -p "$PHONE_DIR"
+   adb shell cp -r "$MOVIES_DIR" "$PHONE_DIR"
+fi
+
+# Ensure host-machine local paths are setup securely (idempotent)
+mkdir -p "$VIDEOS_OUT_DIR"
+mkdir -p "$SUBS_OUT_DIR"
+
+# Pull data directly down to local machine path context
+adb pull "$MOVIES_DIR" "$VIDEOS_OUT_DIR"
+
+if [[ "$WANTS_SUBS" == "y" || "$WANTS_SUBS" == "Y" ]] ; then
+   adb pull "$SUBS_DIR" "$SUBS_OUT_DIR"
+fi
+
+# Clean up zip artifact from tmp folder safely
+rm -f /tmp/tools.zip
+
 echo "All done!"
-
-
