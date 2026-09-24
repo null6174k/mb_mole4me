@@ -19,7 +19,7 @@ case "$OSTYPE" in
         if ! command -v adb &> /dev/null; then
            echo "Error: 'adb' is not installed or not added to your PATH." >&2
            echo "Attempting install...Maintain your internet connection"
-           echo "Downloading Android Command Line Tools..."
+           echo "Downloading Android Command Line Tools for Linux..."
            mkdir -p "$HOME/platform-tools-local"
            wget -qO- "https://dl.google.com/android/repository/platform-tools-latest-linux.zip" > /tmp/tools.zip
            unzip -q /tmp/tools.zip -d "$HOME/platform-tools-local"
@@ -53,6 +53,13 @@ case "$OSTYPE" in
         ;;
     msys* | cygwin* | mingw*)
         echo "OS detected: Windows (Bash Environment)"
+        if ! command -v adb &> /dev/null; then
+           echo "Error: 'adb' is not installed. Attempting Windows download..." >&2
+           mkdir -p "$HOME/platform-tools-local"
+           curl -sSL "https://dl.google.com/android/repository/platform-tools-latest-windows.zip" -o /tmp/tools.zip
+           unzip -q /tmp/tools.zip -d "$HOME/platform-tools-local"
+           export PATH="$PATH:$HOME/platform-tools-local/platform-tools"
+        fi
         ;;
     *)
         echo "Error: Operating system '$OSTYPE' is not supported by this script." >&2
