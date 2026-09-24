@@ -66,6 +66,13 @@ if ($TO_PHONE_DIR -ieq "y") {
 if (-not (Test-Path $VIDEOS_OUT_DIR)) { New-Item -ItemType Directory -Path $VIDEOS_OUT_DIR | Out-Null }
 if (-not (Test-Path $SUBS_OUT_DIR)) { New-Item -ItemType Directory -Path $SUBS_OUT_DIR | Out-Null }
 
+# Check if a phone is actually connected to the laptop
+$Devices = adb devices | Select-String -Pattern "\bdevice\b"
+if (-not $Devices) {
+    Write-Error "Oops..No phones are connected to the laptop...Try plugging your phone or enabling USB debugging from Developer Settings"
+    adb kill-server
+    exit 1
+}
 
 adb pull "$MOVIES_DIR" "$VIDEOS_OUT_DIR"
 
