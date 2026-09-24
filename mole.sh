@@ -61,6 +61,13 @@ esac
 
 adb start-server 
 
+# We also need to check if a phone is actually connected to the laptop before pulling
+if ! adb devices | grep -qE '\bdevice\b'; then
+   echo "Error: Oops..No phones are connected to the laptop...Try plugging your phone or enabling USB debugging from Developer Settings" >&2
+   adb kill-server
+   exit 1
+fi
+
 if [[ "$TO_PHONE_DIR" == "y" || "$TO_PHONE_DIR" == "Y" ]] ; then 
    adb shell mkdir -p "$PHONE_DIR"
    adb shell cp -r "$MOVIES_DIR" "$PHONE_DIR"
@@ -78,4 +85,5 @@ fi
 rm -f /tmp/tools.zip
 
 adb kill-server
+echo "Don't forget to turn off USB debugging when done..."
 echo "All done!"
