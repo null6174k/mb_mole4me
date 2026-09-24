@@ -13,23 +13,25 @@ $TO_PHONE_DIR = Read-Host "Do you want to make the videos visible on your File M
 $HOME_DIR = [System.Environment]::GetFolderPath("UserProfile")
 $VIDEOS_OUT_DIR = Join-Path $HOME_DIR "Videos/MovieBox"
 $SUBS_OUT_DIR = Join-Path $HOME_DIR "Videos/Subs"
-$ZIP_PATH = Join-Path [System.IO.Path]::GetTempPath() "tools.zip"
+$ZIP_PATH = Join-Path ([System.IO.Path]::GetTempPath()) "tools.zip"
 
 # Detect OS and adjust paths / handle ADB setup if missing
-if ($IsLinux) {
+if ($env:OS -eq "Windows_NT") {
+    Write-Host "OS detected: Windows"
+    $URL = "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
+}
+elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+    [System.Runtime.InteropServices.OSPlatform]::Linux)) {
     Write-Host "OS detected: Linux"
     $URL = "https://dl.google.com/android/repository/platform-tools-latest-linux.zip"
-} 
-elseif ($IsMacOS) {
+}
+elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+    [System.Runtime.InteropServices.OSPlatform]::OSX)) {
     Write-Host "OS detected: macOS"
     $VIDEOS_OUT_DIR = Join-Path $HOME_DIR "Movies/MovieBox"
     $SUBS_OUT_DIR = Join-Path $HOME_DIR "Movies/Subs"
     $URL = "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip"
-} 
-elseif ($IsWindows) {
-    Write-Host "OS detected: Windows"
-    $URL = "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
-} 
+}
 else {
     Write-Error "Error: Operating system is not supported by this script."
     exit 1
