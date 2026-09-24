@@ -77,4 +77,5 @@ fi
 
 rm -f /tmp/tools.zip
 
+adb kill-server
 echo "All done!"
